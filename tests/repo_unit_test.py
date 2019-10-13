@@ -165,3 +165,22 @@ def test_delete_non_existant_card_fails(setup_teardown):
 
     with pytest.raises(FileNotFoundError):
         repo.save()
+
+
+@pytest.mark.skip
+def test_cant_delete_card_with_children(setup_teardown):
+    card1 = Card()
+    card2 = Card()
+
+    card2.assign_parent(card1)
+
+    repo = JsonRepo('test')
+    repo.add(card1)
+    repo.add(card2)
+    repo.save()
+
+    uid = card1.uid
+    repo.delete(uid)
+
+    with pytest.raises(Exception):
+        repo.save()

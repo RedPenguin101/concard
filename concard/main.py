@@ -48,7 +48,8 @@ def perform_action(action, selected_card, all_cards):
         action = 'Go back to main'
 
     if action == 'Delete this card':
-        print('Not implemented')
+        response = delete(selected_card)
+        print(response)
         action = 'Go back to main'
 
     return action, selected_card
@@ -118,6 +119,13 @@ def update(card):
         }
     })
     return response
+
+
+def delete(card):
+    return run('prod', {
+        'action': 'delete',
+        'card': {'uid': card['uid']}
+    })
 
 
 def get_selection_and_action(card_list):

@@ -40,7 +40,7 @@ class Card:
         ret_val = 'Card{'
 
         for (key, val) in self.__dict__.items():
-            ret_val += str(key) + ": " + str(val)
+            ret_val += str(key) + ": " + str(val) + ", "
 
         ret_val += '}'
         return ret_val

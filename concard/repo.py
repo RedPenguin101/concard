@@ -24,19 +24,25 @@ class JsonRepo():
         self.cards_in_memory = []
 
         for uid in self.cards_to_delete:
+            if self.card_has_children(uid):
+                raise ValueError(f"Card with uid {uid} has existing children, can't delete")
+
             filename = self.path + str(uid) + ".json"
             print('deleting file ' + filename)
             os.remove(filename)
 
         self.cards_to_delete = []
 
-    def save_card(self, card):
+    def card_has_children(self, uid: str) -> bool:
+        pass
+
+    def save_card(self, card: Card):
         filename = self.path + str(card.uid) + ".json"
         print('saving card ' + str(card))
         with open(filename, 'w') as file:
             file.write(json.dumps(card.to_dict()))
 
-    def add(self, card):
+    def add(self, card: Card):
         uids = [c.uid for c in self.cards_in_memory]
 
         if card.uid in uids:
@@ -45,6 +51,7 @@ class JsonRepo():
         self.cards_in_memory.append(card)
 
     def load(self, filters=None):
+        # TODO: Make this functional, return list
         filenames = os.listdir(self.path)
 
         if not filters:
@@ -58,7 +65,7 @@ class JsonRepo():
                 card = load_card(self.path + target)
                 self.cards_in_memory.append(card)
 
-    def delete(self, uid):
+    def delete(self, uid: str):
         self.cards_to_delete.append(uid)
 
 
