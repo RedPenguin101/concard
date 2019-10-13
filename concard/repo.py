@@ -1,5 +1,9 @@
 import abc
 import json
+import os
+
+from concard.domain import Card
+
 
 class Repo(abc.ABC):
     def __init__(self, env: str):
@@ -16,6 +20,7 @@ class Repo(abc.ABC):
     @abc.abstractmethod
     def load(self):
         pass
+
 
 class JsonRepo(Repo):
     paths = {
@@ -45,4 +50,9 @@ class JsonRepo(Repo):
         self.cards.append(card)
 
     def load(self):
-        pass
+        for filename in os.listdir(self.path):
+            filename = self.path + filename
+            with open(filename, 'r') as file:
+                dic = json.loads(file.read())
+
+            self.cards.append(Card.from_dict(dic))
