@@ -6,6 +6,15 @@ from concard.domain import Card
 from concard.repo import JsonRepo
 
 
+@pytest.fixture
+def setup_teardown():
+    yield
+
+    directory = 'files/test/'
+    for filename in os.listdir(directory):
+        os.remove(directory + filename)
+
+
 def test_repo_create():
     repo = JsonRepo('test')
     assert repo.env == 'test'
@@ -29,7 +38,7 @@ def test_repo_no_duplicate():
         repo.add(card)
 
 
-def test_repo_save():
+def test_repo_save(setup_teardown):
     repo = JsonRepo('test')
     card = Card()
 
@@ -46,10 +55,8 @@ def test_repo_save():
 
     assert data == expected_dict
 
-    os.remove(expected_file_name)
 
-
-def test_load_repo():
+def test_load_repo(setup_teardown):
     repo = JsonRepo('test')
     card = Card()
     card.edit_text('hello world')
@@ -68,7 +75,6 @@ def test_load_repo():
 
     new_repo = JsonRepo('test')
     new_repo.load()
-    delete_file(card.uid)
 
     assert len(new_repo.cards) == len(repo.cards)
     print(repo.cards[0].uid.__class__)
@@ -77,7 +83,7 @@ def test_load_repo():
     assert repo.cards[0] == new_repo.cards[0]
 
 
-def test_repo_load_multi_card():
+def test_repo_load_multi_card(setup_teardown):
     repo = JsonRepo('test')
     card = Card()
     card.edit_text('hello world')
@@ -95,10 +101,22 @@ def test_repo_load_multi_card():
 
     assert len(new_repo.cards) == len(repo.cards)
 
-    delete_file(card.uid)
-    delete_file(card2.uid)
+
+def test_load_by_id(setup_teardown):
+    repo = JsonRepo('test')
+    card = Card()
+    card.title = 'test title'
+    id_to_fetch = str(card.uid)
+
+    repo.add(card)
+    repo.add(Card())
+    repo.save()
+
+    new_repo = JsonRepo('test')
+    new_repo.load({'uid__eq': id_to_fetch})
+
+    assert len(new_repo.cards) == 1
+    assert new_repo.cards[0].title == 'test title'
 
 
-def delete_file(uid):
-    filename = 'files/test/' + str(uid) + ".json"
-    os.remove(filename)
+

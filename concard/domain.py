@@ -22,8 +22,13 @@ class Card:
     @classmethod
     def from_dict(cls, dic):
         card = Card()
-        card.__dict__ = dic
-        card.uid = uuid.UUID(card.uid)
+
+        for key in dic.keys():
+            card.__dict__[key] = dic[key]
+
+        if 'uid' in dic:
+            card.uid = uuid.UUID(card.uid)
+
         if 'parent' in dic:
             card.parent = uuid.UUID(card.parent)
 

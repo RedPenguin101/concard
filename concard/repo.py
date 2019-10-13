@@ -49,10 +49,21 @@ class JsonRepo(Repo):
 
         self.cards.append(card)
 
-    def load(self):
-        for filename in os.listdir(self.path):
-            filename = self.path + filename
-            with open(filename, 'r') as file:
-                dic = json.loads(file.read())
+    def load(self, filters=None):
+        filenames = os.listdir(self.path)
 
-            self.cards.append(Card.from_dict(dic))
+        if filters is None:
+            for filename in filenames:
+                filename = self.path + filename
+                with open(filename, 'r') as file:
+                    dic = json.loads(file.read())
+
+                self.cards.append(Card.from_dict(dic))
+
+        elif 'uid__eq' in filters:
+            target = filters['uid__eq'] + '.json'
+            if target in filenames:
+                with open(self.path + target) as file:
+                    dic = json.loads(file.read())
+
+                self.cards.append(Card.from_dict(dic))
