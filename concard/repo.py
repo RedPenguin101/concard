@@ -1,5 +1,6 @@
 import json
 import os
+from typing import List
 
 from concard.domain import Card
 
@@ -13,8 +14,8 @@ class JsonRepo():
     def __init__(self, env: str):
         self.env = env
         self.path = JsonRepo.paths[env]
-        self.cards_in_memory = []
-        self.cards_to_delete = []
+        self.cards_in_memory: List[Card] = []
+        self.cards_to_delete: List[str] = []
 
     def save(self):
         for card in self.cards_in_memory:

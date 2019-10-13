@@ -19,7 +19,7 @@ def run(env, crud_args) -> dict:
     return {'message': 'Invalid action'}
 
 
-def create_card_command(env, card_dict):
+def create_card_command(env, card_dict: dict) -> dict:
     repo = JsonRepo(env)
     card = Card.from_dict(card_dict)
     repo.add(card)
@@ -27,13 +27,13 @@ def create_card_command(env, card_dict):
     return {'message': 'Card created', 'card_uid': str(card.uid)}
 
 
-def read_cards_command(env, filters=None):
+def read_cards_command(env, filters=None) -> dict:
     repo = JsonRepo(env)
     repo.load(filters)
     return {'cards': [card.to_dict() for card in repo.cards_in_memory]}
 
 
-def update_card_command(env, card_dict):
+def update_card_command(env, card_dict: dict) -> dict:
     updated_card = Card.from_dict(card_dict)
 
     repo = JsonRepo(env)
@@ -50,7 +50,7 @@ def update_card_command(env, card_dict):
     }
 
 
-def delete_card_command(env, card_dict):
+def delete_card_command(env, card_dict: dict) -> dict:
     uid = card_dict['uid']
 
     repo = JsonRepo(env)

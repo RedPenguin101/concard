@@ -8,27 +8,27 @@ class Card:
     def assign_parent(self, parent_card):
         self.parent = parent_card.uid
 
-    def to_dict(self):
-        dic = self.__dict__.copy()
+    def to_dict(self) -> dict:
+        card_dict = self.__dict__.copy()
 
-        dic['uid'] = str(dic['uid'])
+        card_dict['uid'] = str(card_dict['uid'])
 
-        if 'parent' in dic:
-            dic['parent'] = str(dic['parent'])
+        if 'parent' in card_dict:
+            card_dict['parent'] = str(card_dict['parent'])
 
-        return dic
+        return card_dict
 
     @classmethod
-    def from_dict(cls, dic):
+    def from_dict(cls, card_dict: dict):
         card = Card()
 
-        for key in dic.keys():
-            card.__dict__[key] = dic[key]
+        for key in card_dict.keys():
+            card.__dict__[key] = card_dict[key]
 
-        if 'uid' in dic:
+        if 'uid' in card_dict:
             card.uid = uuid.UUID(card.uid)
 
-        if 'parent' in dic:
+        if 'parent' in card_dict:
             card.parent = uuid.UUID(card.parent)
 
         return card
@@ -37,10 +37,10 @@ class Card:
         return self.__dict__ == other.__dict__
 
     def __repr__(self):
-        rv = 'Card{'
+        ret_val = 'Card{'
 
         for (key, val) in self.__dict__.items():
-            rv += str(key) + ": " + str(val)
+            ret_val += str(key) + ": " + str(val)
 
-        rv += '}'
-        return rv
+        ret_val += '}'
+        return ret_val
