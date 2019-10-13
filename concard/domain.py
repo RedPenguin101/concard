@@ -35,3 +35,12 @@ class Card:
 
     def __eq__(self, other):
         return self.__dict__ == other.__dict__
+
+    def __repr__(self):
+        rv = 'Card{'
+
+        for (key, val) in self.__dict__.items():
+            rv += str(key) + ": " + str(val)
+
+        rv += '}'
+        return rv

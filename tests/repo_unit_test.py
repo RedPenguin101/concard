@@ -25,8 +25,8 @@ def test_repo_add():
     repo = JsonRepo('test')
     card = Card()
     repo.add(card)
-    assert repo.cards == [card]
-    assert isinstance(repo.cards[0].uid, uuid.UUID)
+    assert repo.cards_in_memory == [card]
+    assert isinstance(repo.cards_in_memory[0].uid, uuid.UUID)
 
 
 def test_repo_no_duplicate():
@@ -65,22 +65,14 @@ def test_load_repo(setup_teardown):
     card.assign_parent(card2)
 
     repo.add(card)
-
-    assert isinstance(repo.cards[0].uid, uuid.UUID)
-    print(repo.cards[0].uid.__class__)
-    print(repo.cards[0].uid.__class__)
-
     repo.save()
-    print(repo.cards[0].uid.__class__)
 
     new_repo = JsonRepo('test')
     new_repo.load()
 
-    assert len(new_repo.cards) == len(repo.cards)
-    print(repo.cards[0].uid.__class__)
+    assert len(new_repo.cards_in_memory) == 1
 
-    assert isinstance(repo.cards[0].uid, uuid.UUID)
-    assert repo.cards[0] == new_repo.cards[0]
+    assert new_repo.cards_in_memory[0] == card
 
 
 def test_repo_load_multi_card(setup_teardown):
@@ -99,7 +91,7 @@ def test_repo_load_multi_card(setup_teardown):
     new_repo = JsonRepo('test')
     new_repo.load()
 
-    assert len(new_repo.cards) == len(repo.cards)
+    assert len(new_repo.cards_in_memory) == 2
 
 
 def test_load_by_id(setup_teardown):
@@ -115,5 +107,61 @@ def test_load_by_id(setup_teardown):
     new_repo = JsonRepo('test')
     new_repo.load({'uid__eq': id_to_fetch})
 
-    assert len(new_repo.cards) == 1
-    assert new_repo.cards[0].title == 'test title'
+    assert len(new_repo.cards_in_memory) == 1
+    assert new_repo.cards_in_memory[0].title == 'test title'
+
+
+def create_and_save_card(title, text=None):
+    repo = JsonRepo('test')
+    card = Card()
+    card.title = title
+    if text:
+        card.text = text
+
+    uid = str(card.uid)
+
+    repo.add(card)
+    repo.save()
+
+    print('created and saved card with uid ' + uid)
+
+    return uid
+
+
+def test_memory_empties_on_save(setup_teardown):
+    repo = JsonRepo('test')
+    card = Card()
+    repo.add(card)
+    repo.save()
+    assert len(repo.cards_in_memory) == 0
+
+
+def test_delete_mem_empties_on_save(setup_teardown):
+    uid = create_and_save_card('test title')
+    repo = JsonRepo('test')
+    repo.delete(uid)
+    repo.save()
+    assert len(repo.cards_to_delete) == 0
+
+
+def test_delete_deletes(setup_teardown):
+    uid = create_and_save_card('test title')
+
+    repo = JsonRepo('test')
+    repo.delete(uid)
+    repo.save()
+
+    test_repo = JsonRepo('test')
+    test_repo.load()
+
+    assert len(test_repo.cards_in_memory) == 0
+
+
+def test_delete_non_existant_card_fails(setup_teardown):
+    uid = str(uuid.uuid4())
+
+    repo = JsonRepo('test')
+    repo.delete(uid)
+
+    with pytest.raises(FileNotFoundError):
+        repo.save()

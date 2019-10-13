@@ -13,6 +13,9 @@ def run(env, crud_args) -> dict:
     if action == 'update':
         return update_card_command(env, crud_args['card'])
 
+    if action == 'delete':
+        return delete_card_command(env, crud_args['card'])
+
     return {'message': 'Invalid action'}
 
 
@@ -27,7 +30,7 @@ def create_card_command(env, card_dict):
 def read_cards_command(env, filters=None):
     repo = JsonRepo(env)
     repo.load(filters)
-    return {'cards': [card.to_dict() for card in repo.cards]}
+    return {'cards': [card.to_dict() for card in repo.cards_in_memory]}
 
 
 def update_card_command(env, card_dict):
@@ -36,12 +39,30 @@ def update_card_command(env, card_dict):
     repo = JsonRepo(env)
     repo.load({'uid__eq': str(updated_card.uid)})
 
-    old_card = repo.cards[0]
-    repo.cards = [updated_card]
+    old_card = repo.cards_in_memory[0]
+    repo.cards_in_memory = [updated_card]
     repo.save()
 
     return {
         'message': 'Card updated',
         'old_card': old_card.to_dict(),
         'new_card': updated_card.to_dict(),
+    }
+
+
+def delete_card_command(env, card_dict):
+    uid = card_dict['uid']
+
+    repo = JsonRepo(env)
+    repo.delete(uid)
+    try:
+        repo.save()
+    except FileNotFoundError:
+        return {
+            'message': 'No card with uid "%s" was found in the repo' % uid
+        }
+
+    return {
+        'message': 'Card deleted',
+        'uid': str(uid)
     }

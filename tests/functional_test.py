@@ -104,7 +104,7 @@ def test_retrieve_by_uid(setup_teardown):
     assert len(read_response['cards']) == 1
 
 
-def test_edit_card():
+def test_edit_card(setup_teardown):
     env = 'test'
     args = {
         'action': 'create',
@@ -131,3 +131,43 @@ def test_edit_card():
     assert response['old_card']['text'] == 'test text'
     assert response['new_card']['title'] == 'updated title'
     assert response['new_card']['text'] == 'updated text'
+
+
+def test_delete(setup_teardown):
+    env = 'test'
+    args = {
+        'action': 'create',
+        'card': {'title': 'test title', 'text': 'test text'}
+    }
+
+    response = run(env, args)
+    target_uid = response['card_uid']
+    print(target_uid)
+
+    args = {
+        'action': 'delete',
+        'card': {
+            'uid': str(target_uid),
+        }
+    }
+
+    response = run(env, args)
+
+    assert response['message'] == 'Card deleted'
+    assert response['uid'] == str(target_uid)
+
+    assert len(run(env, {'action': "read"})['cards']) == 0
+
+
+def test_delete_of_no_card(setup_teardown):
+    env = 'test'
+    args = {
+        'action': 'delete',
+        'card': {
+            'uid': 'I will fail'
+        }
+    }
+
+    response = run(env, args)
+
+    assert response['message'] == 'No card with uid "I will fail" was found in the repo'
