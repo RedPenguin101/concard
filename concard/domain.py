@@ -33,6 +33,17 @@ class Card:
 
         return card
 
+    def update_from_dict(self, card_dict):
+        if str(self.uid) != card_dict['uid']:
+            y = card_dict['uid']
+            x = f'original uid {self.uid} does not match update uid {y}'
+            raise Exception(x)
+
+        del card_dict['uid']
+
+        for key, value in card_dict.items():
+            self.__dict__[key] = value
+
     def __eq__(self, other):
         return self.__dict__ == other.__dict__
 

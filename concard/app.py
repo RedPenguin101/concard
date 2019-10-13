@@ -34,19 +34,16 @@ def read_cards_command(env, filters=None) -> dict:
 
 
 def update_card_command(env, card_dict: dict) -> dict:
-    updated_card = Card.from_dict(card_dict)
-
     repo = JsonRepo(env)
-    repo.load({'uid__eq': str(updated_card.uid)})
+    repo.load({'uid__eq': str(card_dict['uid'])})
 
-    old_card = repo.cards_in_memory[0]
-    repo.cards_in_memory = [updated_card]
+    card = repo.cards_in_memory[0]
+    card.update_from_dict(card_dict)
     repo.save()
 
     return {
         'message': 'Card updated',
-        'old_card': old_card.to_dict(),
-        'new_card': updated_card.to_dict(),
+        'new_card': card.to_dict(),
     }
 
 

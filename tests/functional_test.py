@@ -127,10 +127,24 @@ def test_edit_card(setup_teardown):
     response = run(env, args)
 
     assert response['message'] == 'Card updated'
-    assert response['old_card']['title'] == 'test title'
-    assert response['old_card']['text'] == 'test text'
     assert response['new_card']['title'] == 'updated title'
     assert response['new_card']['text'] == 'updated text'
+
+
+def test_update_card_doesnt_delete_existing_params(setup_teardown):
+    uid = create_card(title='test title', text='test text')
+
+    args = {
+        'action': 'update',
+        'card': {'uid': str(uid), 'text': 'updated text'}
+    }
+
+    run('test', args)
+
+    card = read_repo()['cards'][0]
+
+    assert card['title'] == 'test title'
+    assert card['text'] == 'updated text'
 
 
 def test_delete(setup_teardown):
@@ -182,7 +196,7 @@ def test_create_with_parent(setup_teardown):
     assert cards[0]['parent'] == str(uid)
 
 
-def test_cant_delete_card_with_children():
+def test_cant_delete_card_with_children(setup_teardown):
     uid = create_card()
     create_card(parent=str(uid))
 

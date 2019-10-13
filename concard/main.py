@@ -110,13 +110,20 @@ def create_child(selected_pearl):
 
 def update(card):
     inputs_for_update = pi.prompt(CREATE_QS)
+
+    card = {
+            'uid': card['uid'],
+    }
+
+    if inputs_for_update['title'] != "":
+        card['title'] = inputs_for_update['title']
+
+    if inputs_for_update['text'] != "":
+        card['text'] = inputs_for_update['text']
+
     response = run('prod', {
         'action': 'update',
-        'card': {
-            'uid': card['uid'],
-            'title': inputs_for_update['title'],
-            'text': inputs_for_update['text'],
-        }
+        'card': card
     })
     return response
 

@@ -67,3 +67,19 @@ def test_equality():
     })
 
     assert card == card
+
+
+def test_update_from_dict():
+    card = Card()
+    card.title = 'old title'
+    card.text = 'old text'
+
+    card_dict = {
+        'uid': str(card.uid),
+        'title': 'new title'
+    }
+
+    card.update_from_dict(card_dict)
+
+    assert card.title == 'new title'
+    assert card.text == 'old text'

@@ -5,10 +5,8 @@
 	* Parent
 	* Question - Answer
 
-
-
 # todo
-* CRUD
+* Card CRUD
 	* ~~create~~ DONE
 	* ~~update~~ DONE
 	* ~~read~~ DONE
