@@ -8,6 +8,11 @@ class Card:
     def assign_parent(self, parent_card):
         self.parent = parent_card.uid
 
+    def text_exceeds_500(self) -> bool:
+        if hasattr(self, 'text'):
+            return len(self.text) > 500
+        return False
+
     def to_dict(self) -> dict:
         card_dict = self.__dict__.copy()
 

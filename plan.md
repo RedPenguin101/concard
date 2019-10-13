@@ -11,3 +11,6 @@
 	* ~~update~~ DONE
 	* ~~read~~ DONE
 	* ~~delete~~ DONE
+
+* move parent
+* text size validation
