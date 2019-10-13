@@ -37,7 +37,8 @@ class JsonRepo():
 
         if not filters:
             for filename in filenames:
-                self.cards.append(load_card(self.path + filename))
+                if filename.endswith('.json'):
+                    self.cards.append(load_card(self.path + filename))
 
         elif 'uid__eq' in filters:
             target = filters['uid__eq'] + '.json'
