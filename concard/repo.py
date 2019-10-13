@@ -1,28 +1,10 @@
-import abc
 import json
 import os
 
 from concard.domain import Card
 
 
-class Repo(abc.ABC):
-    def __init__(self, env: str):
-        pass
-
-    @abc.abstractmethod
-    def save(self):
-        pass
-
-    @abc.abstractmethod
-    def add(self, card):
-        pass
-
-    @abc.abstractmethod
-    def load(self):
-        pass
-
-
-class JsonRepo(Repo):
+class JsonRepo():
     paths = {
         'test': 'files/test/',
         'prod': 'files/',

@@ -10,6 +10,8 @@ def run(env, crud_args) -> dict:
     if action == 'read':
         return read_cards_command(env, crud_args.get('filters'))
 
+    return {'message': 'Invalid action'}
+
 
 def create_card_command(env, card_dict):
     repo = JsonRepo(env)
