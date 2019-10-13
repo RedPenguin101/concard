@@ -18,17 +18,11 @@ def test_card_create_with_parent():
     assert card1.parent == card2.uid
 
 
-def test_edit_card_body():
-    card = Card()
-    card.edit_text('text')
-    assert card.text == 'text'
-
-
 def test_card_to_dict():
     card = Card()
     card2 = Card()
     card.title = 'test title'
-    card.edit_text('hello world')
+    card.text = 'hello world'
     card.assign_parent(card2)
 
     dic = card.to_dict()
@@ -59,6 +53,7 @@ def test_from_dict():
     assert card.parent == p_uid
     assert card.text == 'hello world'
     assert card.title == 'test title'
+
 
 def test_equality():
     uid = uuid.uuid4()

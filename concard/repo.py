@@ -44,6 +44,7 @@ class JsonRepo(Repo):
 
     def add(self, card):
         uids = [c.uid for c in self.cards]
+
         if card.uid in uids:
             raise Exception("card with that UID is already in the repository")
 
@@ -52,18 +53,16 @@ class JsonRepo(Repo):
     def load(self, filters=None):
         filenames = os.listdir(self.path)
 
-        if filters is None:
+        if not filters:
             for filename in filenames:
-                filename = self.path + filename
-                with open(filename, 'r') as file:
-                    dic = json.loads(file.read())
-
-                self.cards.append(Card.from_dict(dic))
+                self.cards.append(load_card(self.path + filename))
 
         elif 'uid__eq' in filters:
             target = filters['uid__eq'] + '.json'
             if target in filenames:
-                with open(self.path + target) as file:
-                    dic = json.loads(file.read())
+                self.cards.append(load_card(self.path + target))
 
-                self.cards.append(Card.from_dict(dic))
+
+def load_card(filename):
+    with open(filename, 'r') as file:
+        return Card.from_dict(json.loads(file.read()))

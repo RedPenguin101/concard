@@ -59,7 +59,7 @@ def test_repo_save(setup_teardown):
 def test_load_repo(setup_teardown):
     repo = JsonRepo('test')
     card = Card()
-    card.edit_text('hello world')
+    card.text = 'hello world'
     card.title = 'test title'
     card2 = Card()
     card.assign_parent(card2)
@@ -86,7 +86,7 @@ def test_load_repo(setup_teardown):
 def test_repo_load_multi_card(setup_teardown):
     repo = JsonRepo('test')
     card = Card()
-    card.edit_text('hello world')
+    card.text = 'hello world'
     card.title = 'test title'
     card2 = Card()
     card.assign_parent(card2)
@@ -117,6 +117,3 @@ def test_load_by_id(setup_teardown):
 
     assert len(new_repo.cards) == 1
     assert new_repo.cards[0].title == 'test title'
-
-
-
