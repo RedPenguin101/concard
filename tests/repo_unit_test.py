@@ -167,7 +167,15 @@ def test_delete_non_existant_card_fails(setup_teardown):
         repo.save()
 
 
-@pytest.mark.skip
+def test_delete_with_invalid_uuid_fails(setup_teardown):
+    uid = "hello world"
+
+    repo = JsonRepo('test')
+
+    with pytest.raises(ValueError):
+        repo.delete(uid)
+
+
 def test_cant_delete_card_with_children(setup_teardown):
     card1 = Card()
     card2 = Card()
@@ -179,7 +187,7 @@ def test_cant_delete_card_with_children(setup_teardown):
     repo.add(card2)
     repo.save()
 
-    uid = card1.uid
+    uid = str(card1.uid)
     repo.delete(uid)
 
     with pytest.raises(Exception):

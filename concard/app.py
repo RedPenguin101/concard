@@ -57,10 +57,14 @@ def delete_card_command(env, card_dict: dict) -> dict:
     repo.delete(uid)
     try:
         repo.save()
+
     except FileNotFoundError:
         return {
             'message': 'No card with uid "%s" was found in the repo' % uid
         }
+
+    except ValueError:
+        return {'message': 'This card has existing children cards, cannot delete'}
 
     return {
         'message': 'Card deleted',

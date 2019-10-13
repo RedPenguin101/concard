@@ -1,5 +1,6 @@
 import json
 import os
+import uuid
 from typing import List
 
 from concard.domain import Card
@@ -15,7 +16,7 @@ class JsonRepo():
         self.env = env
         self.path = JsonRepo.paths[env]
         self.cards_in_memory: List[Card] = []
-        self.cards_to_delete: List[str] = []
+        self.cards_to_delete: List[uuid.UUID] = []
 
     def save(self):
         for card in self.cards_in_memory:
@@ -28,17 +29,21 @@ class JsonRepo():
                 raise ValueError(f"Card with uid {uid} has existing children, can't delete")
 
             filename = self.path + str(uid) + ".json"
-            print('deleting file ' + filename)
             os.remove(filename)
 
         self.cards_to_delete = []
 
-    def card_has_children(self, uid: str) -> bool:
-        pass
+    def card_has_children(self, uid: uuid.UUID) -> bool:
+        all_cards: List[Card] = self.get_cards_from_repo()
+
+        for card in all_cards:
+            if hasattr(card, 'parent') and card.parent == uid:
+                return True
+
+        return False
 
     def save_card(self, card: Card):
         filename = self.path + str(card.uid) + ".json"
-        print('saving card ' + str(card))
         with open(filename, 'w') as file:
             file.write(json.dumps(card.to_dict()))
 
@@ -51,21 +56,30 @@ class JsonRepo():
         self.cards_in_memory.append(card)
 
     def load(self, filters=None):
-        # TODO: Make this functional, return list
+        self.cards_in_memory = self.get_cards_from_repo(filters)
+
+    def get_cards_from_repo(self, filters=None) -> List[Card]:
         filenames = os.listdir(self.path)
+        memory = []
 
         if not filters:
             for filename in filenames:
                 if filename.endswith('.json'):
-                    self.cards_in_memory.append(load_card(self.path + filename))
+                    memory.append(load_card(self.path + filename))
 
         elif 'uid__eq' in filters:
             target = filters['uid__eq'] + '.json'
             if target in filenames:
                 card = load_card(self.path + target)
-                self.cards_in_memory.append(card)
+                memory.append(card)
 
-    def delete(self, uid: str):
+        return memory
+
+    def delete(self, uid_str: str):
+        try:
+            uid = uuid.UUID(uid_str)
+        except Exception:
+            raise ValueError(f'value passed {uid_str} is not a valid UUID')
         self.cards_to_delete.append(uid)
 
 
