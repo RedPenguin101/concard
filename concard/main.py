@@ -43,9 +43,8 @@ def perform_action(action, selected_card, all_cards):
         action = 'Go back to main'
 
     if action == 'Edit this card':
-        print('Not implemented')
-        # response = update(selected_card)
-        # print(response)
+        response = update(selected_card)
+        print(response)
         action = 'Go back to main'
 
     if action == 'Delete this card':
@@ -116,7 +115,6 @@ def update(card):
             'uid': card['uid'],
             'title': inputs_for_update['title'],
             'text': inputs_for_update['text'],
-            'parent': None
         }
     })
     return response

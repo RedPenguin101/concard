@@ -43,7 +43,8 @@ class JsonRepo():
         elif 'uid__eq' in filters:
             target = filters['uid__eq'] + '.json'
             if target in filenames:
-                self.cards.append(load_card(self.path + target))
+                card = load_card(self.path + target)
+                self.cards.append(card)
 
 
 def load_card(filename):

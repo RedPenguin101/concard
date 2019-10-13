@@ -102,3 +102,32 @@ def test_retrieve_by_uid(setup_teardown):
     read_response = run(env, args)
 
     assert len(read_response['cards']) == 1
+
+
+def test_edit_card():
+    env = 'test'
+    args = {
+        'action': 'create',
+        'card': {'title': 'test title', 'text': 'test text'}
+    }
+
+    response = run(env, args)
+    target_uid = response['card_uid']
+    print(target_uid)
+
+    args = {
+        'action': 'update',
+        'card': {
+            'uid': str(target_uid),
+            'title': 'updated title',
+            'text': 'updated text'
+        }
+    }
+
+    response = run(env, args)
+
+    assert response['message'] == 'Card updated'
+    assert response['old_card']['title'] == 'test title'
+    assert response['old_card']['text'] == 'test text'
+    assert response['new_card']['title'] == 'updated title'
+    assert response['new_card']['text'] == 'updated text'
