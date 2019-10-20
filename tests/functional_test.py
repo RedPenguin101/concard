@@ -3,6 +3,22 @@ import pytest
 from concard.app import run
 
 
+def create_card(**kwargs) -> str:
+    card = {}
+    for key, value in kwargs.items():
+        card[key] = value
+    args = {'action': 'create', 'card': card}
+    response = run('test', args)
+    return response['card_uid']
+
+
+def read_repo(filters=None) -> list:
+    args = {'action': 'read'}
+    if filters:
+        args['filters'] = filters
+    return run('test', args)
+
+
 @pytest.fixture
 def setup_teardown():
     yield
@@ -206,17 +222,29 @@ def test_cant_delete_card_with_children(setup_teardown):
     assert response['message'] == expected
 
 
-def create_card(**kwargs) -> str:
-    card = {}
-    for key, value in kwargs.items():
-        card[key] = value
-    args = {'action': 'create', 'card': card}
-    response = run('test', args)
-    return response['card_uid']
+def test_card_has_length_attr(setup_teardown):
+    create_card(text='hello world')
+    response = read_repo()
+    print(response)
+    assert not response['cards'][0]['text_exceeds_500']
 
 
-def read_repo(filters=None) -> list:
-    args = {'action': 'read'}
-    if filters:
-        args['filters'] = filters
-    return run('test', args)
+def test_card_returns_exceed_500_check(setup_teardown):
+    long_string = ('Lorem ipsum dolor sit amet, consectetur adipiscing elit. '
+                   'Integer iaculis interdum diam vitae dapibus. Praesent '
+                   'et dapibus eros, rutrum feugiat velit. Proin placerat '
+                   'orci dignissim, eleifend dui quis, aliquet tellus. '
+                   'Vestibulum ante ipsum primis in faucibus orci luctus et '
+                   'ultrices posuere cubilia Curae; Cras vel tincidunt '
+                   'velit. Fusce nulla erat, malesuada eu ultrices pulvinar,'
+                   ' fringilla viverra nisi. Donec non rutrum velit, sed '
+                   'rutrum mi. Praesent consequat, tellus eget sagittis '
+                   'ornare, augue justo molestie mi, vel accumsan risus '
+                   'turpis id est. Donec congue hendrerit urna, nec aliquet '
+                   'quam hendrerit at. Integer eget dui nec arcu venenatis '
+                   'viverra nec nec justo. Praesent.')
+    create_card(text=long_string)
+
+    response = read_repo()
+    print(response)
+    assert response['cards'][0]['text_exceeds_500']

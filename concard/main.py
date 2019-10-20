@@ -75,8 +75,13 @@ def get_parent(selected_card, all_cards):
 def print_card(selected_card, all_cards):
     children = get_children_of_selected(selected_card, all_cards)
     print("\n")
-    print(selected_card['title'])
+    print(selected_card['title'].upper())
     print(selected_card['text'])
+    if selected_card.get('text_exceeds_500'):
+        print(f"!!WARNING: Text length is {len(selected_card['text'])}!!")
+    print("--------")
+    print("Children")
+    print("--------")
     for child in children:
         title = child['title']
         print(f'> {title}')

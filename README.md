@@ -16,8 +16,9 @@ Each card has a title, in the form of a 'who, what, when, where, why' statement,
 * each thing should be 500 chars max
 * each thing should have a parent
 * each thing should have tags
-* somehow able to make quizes out of them
+* make quizes out of them
 * references to places in books or articles, e.g. card on DIP would reference Clean Arch book chapter
+* spaced repetition reviews
 
 ## Inspirations
 * Aphorisms, the unzip nature of them

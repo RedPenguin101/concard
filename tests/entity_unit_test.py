@@ -22,12 +22,13 @@ def test_card_to_dict():
     card = Card()
     card2 = Card()
     card.title = 'test title'
-    card.text = 'hello world'
+    card.edit_text('hello world')
     card.assign_parent(card2)
 
     dic = card.to_dict()
     expected = {
         'uid': str(card.uid),
+        'text_exceeds_500': False,
         'title': card.title,
         'text': card.text,
         'parent': str(card.parent),
@@ -72,7 +73,7 @@ def test_equality():
 def test_update_from_dict():
     card = Card()
     card.title = 'old title'
-    card.text = 'old text'
+    card.edit_text('old text')
 
     card_dict = {
         'uid': str(card.uid),
@@ -103,10 +104,33 @@ def test_text_length_max_500():
                    'quam hendrerit at. Integer eget dui nec arcu venenatis '
                    'viverra nec nec justo. Praesent.')
 
-    card.text = long_string
-    assert card.text_exceeds_500()
+    card.edit_text(long_string)
+    assert card.text_exceeds_500
 
 
 def test_length_check_no_text():
     card = Card()
-    assert not card.text_exceeds_500()
+    card.edit_text('')
+    assert not card.text_exceeds_500
+
+
+def test_create_from_dict_triggers_text_validation():
+    long_string = ('Lorem ipsum dolor sit amet, consectetur adipiscing elit. '
+                   'Integer iaculis interdum diam vitae dapibus. Praesent '
+                   'et dapibus eros, rutrum feugiat velit. Proin placerat '
+                   'orci dignissim, eleifend dui quis, aliquet tellus. '
+                   'Vestibulum ante ipsum primis in faucibus orci luctus et '
+                   'ultrices posuere cubilia Curae; Cras vel tincidunt '
+                   'velit. Fusce nulla erat, malesuada eu ultrices pulvinar,'
+                   ' fringilla viverra nisi. Donec non rutrum velit, sed '
+                   'rutrum mi. Praesent consequat, tellus eget sagittis '
+                   'ornare, augue justo molestie mi, vel accumsan risus '
+                   'turpis id est. Donec congue hendrerit urna, nec aliquet '
+                   'quam hendrerit at. Integer eget dui nec arcu venenatis '
+                   'viverra nec nec justo. Praesent.')
+
+    card = Card.from_dict({
+        'text': long_string
+    })
+
+    assert card.text_exceeds_500

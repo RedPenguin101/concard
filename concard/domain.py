@@ -8,10 +8,9 @@ class Card:
     def assign_parent(self, parent_card):
         self.parent = parent_card.uid
 
-    def text_exceeds_500(self) -> bool:
-        if hasattr(self, 'text'):
-            return len(self.text) > 500
-        return False
+    def edit_text(self, text):
+        self.text = text
+        self.text_exceeds_500 = (len(text) > 500)
 
     def to_dict(self) -> dict:
         card_dict = self.__dict__.copy()
@@ -35,6 +34,9 @@ class Card:
 
         if 'parent' in card_dict:
             card.parent = uuid.UUID(card.parent)
+
+        if 'text' in card_dict:
+            card.edit_text(card_dict['text'])
 
         return card
 

@@ -3,7 +3,20 @@
 	* Title
 	* Body
 	* Parent
-	* Question - Answer
+	* ReviewHistory: tuples of date and response
+	* NextReview
+	* References
+
+* Question - Answer
+	* QuestionHistory: tuples of date and success
+	* NextQuiz
+
+* Review
+	* Date
+	* Cards
+	* Questions
+	* Responses
+
 
 # todo
 * Card CRUD
@@ -13,4 +26,5 @@
 	* ~~delete~~ DONE
 
 * move parent
-* text size validation
+* ~~text size validation - warning on UI if text exceeds 500char~~ DONE
+

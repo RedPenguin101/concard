@@ -59,7 +59,7 @@ def test_repo_save(setup_teardown):
 def test_load_repo(setup_teardown):
     repo = JsonRepo('test')
     card = Card()
-    card.text = 'hello world'
+    card.edit_text('hello world')
     card.title = 'test title'
     card2 = Card()
     card.assign_parent(card2)
