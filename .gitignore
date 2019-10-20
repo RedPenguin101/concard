@@ -4,4 +4,4 @@ venv
 __pycache__
 files/
 .mypy_cache
-concard.egg-info
+concard.egg-info/
